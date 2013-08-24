@@ -7,6 +7,8 @@
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 
+backgroundSpriteData = require( "backgroundsprites" )
+
 ----------------------------------------------------------------------------------
 -- 
 --	NOTE:
@@ -32,6 +34,12 @@ end
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
+
+	bakckgroundImageSheet = graphics.newImageSheet( "images/background.png", backgroundSpriteData:getSheet( ) )
+
+	backgroundImage = display.newImage( bakckgroundImageSheet, backgroundSpriteData:getFrameIndex("game_page") )
+
+	group:insert( backgroundImage )
 
 	-----------------------------------------------------------------------------
 		
