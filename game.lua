@@ -7,6 +7,9 @@
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 
+-- requires
+require( "class" )
+
 backgroundSpriteData = require( "backgroundsprites" )
 
 ----------------------------------------------------------------------------------
@@ -23,6 +26,11 @@ backgroundSpriteData = require( "backgroundsprites" )
 ---------------------------------------------------------------------------------
 
 function tick( event )
+
+	-- test
+    tileObj = Class( )
+
+
 	-- add tiles
 	-- update tiles
 	-- update time
