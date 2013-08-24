@@ -20,6 +20,15 @@ local scene = storyboard.newScene()
 -- BEGINNING OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
 
+function tick( event )
+	-- add tiles
+	-- update tiles
+	-- update time
+	-- update score
+	-- game over if fail
+	-- next level if pass
+end
+
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
@@ -37,6 +46,8 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
+
+	Runtime:addEventListener( "enterFrame", tick )
 	
 	-----------------------------------------------------------------------------
 		
@@ -50,6 +61,8 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
+
+	Runtime:removeEventListener( "enterFrame", tick )
 	
 	-----------------------------------------------------------------------------
 	
