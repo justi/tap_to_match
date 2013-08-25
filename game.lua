@@ -36,7 +36,7 @@ function scene:tick( event )
   if self.ready_to_tiles == true then
 		if self.timer:getCallback('TimerStarted') == true then
 		  self.ready_to_tiles = false
-      self.tilesManager:createTiles(TILES_COUNT)
+      self.tilesManager:createTiles( )
 		end
 	end
 

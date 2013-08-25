@@ -6,6 +6,7 @@ function TilesManager:new( group )
   -- Create a new sprite and add it to the group
   
   self.tiles = {}
+  self.numbers = {}
   self.orientation = nil
   self.group = group
   self.rows = 0
@@ -15,13 +16,13 @@ function TilesManager:new( group )
   self.maxHeight = 0
 end
 
-function TilesManager:createTiles( count )
+function TilesManager:createTiles( )
 
   display.setStatusBar(display.HiddenStatusBar) 
   self.maxWidth = display.contentWidth 
   self.maxHeight = display.contentHeight 
 
-  sqrt = math.sqrt(count)
+  sqrt = math.sqrt(TILES_COUNT)
   floor = math.floor(sqrt)
   ceil = math.ceil(sqrt)
   round = math.round(sqrt)
@@ -46,18 +47,41 @@ function TilesManager:createTiles( count )
     self.maxTileSize = self.maxHeight / self.rows
   end
   
-  offsetXY = self.maxTileSize/2
+  offsetXY = 2
   topOffset = 80
   padding = 10
+  tileSize = self.maxTileSize - 10
+  fontSize = 20
 
-  for i=0, count-1, 1 do
+  
+  self:prepareNumbers()
+
+  for i=0, TILES_COUNT -1, 1 do
     posX = math.floor((i%self.cols) * self.maxTileSize + offsetXY)
     posY = math.floor(math.floor(i/self.cols) * self.maxTileSize + offsetXY) + topOffset
     
-    tile = Tile( self.group )
-    tile:setSize(self.maxTileSize - 10)
+    tile = Tile( self.group, self.numbers[i+1])
+    tile:setSize(tileSize)
     tile:moveTo(posX, posY)
 
+    tile:prepareText(fontSize, tileSize)
+
     self.tiles[i] = tile
+  end
+end
+
+function TilesManager:prepareNumbers( )
+  math.randomseed(system.getTimer())
+  
+  for i=1, TILES_COUNT, 1 do
+    self.numbers[i] = i
+  end
+
+  for i=1, TILES_COUNT, 1 do
+    local index1 = math.random(2, TILES_COUNT )
+    local index2 = math.random(2, TILES_COUNT )
+    local tmp = self.numbers[index1]
+    self.numbers[index1] = self.numbers[index2]
+    self.numbers[index2] = tmp
   end
 end

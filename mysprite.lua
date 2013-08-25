@@ -14,9 +14,3 @@ function MySprite:setSize( a )
 	ratio = a/self.spriteInst.width
 	self.spriteInst:scale(ratio, ratio)
 end
-
-function MySprite:initialise( group )
-	if group ~= nil then
-		group:insert( self.spriteInst )
-	end
-end
