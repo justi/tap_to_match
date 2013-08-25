@@ -9,6 +9,8 @@ local scene = storyboard.newScene()
 
 -- requires
 require( "class" )
+require( "mytimer" )
+
 
 backgroundSpriteData = require( "backgroundsprites" )
 
@@ -28,7 +30,7 @@ backgroundSpriteData = require( "backgroundsprites" )
 function tick( event )
 
 	-- test
-    tileObj = Class( )
+    tileObj = Class( )   
 
 
 	-- add tiles
@@ -39,11 +41,7 @@ function tick( event )
 	-- next level if pass
 end
 
-function formatTime (val)
-	print ("val"..val/1000)
-	print ("insec"..val % 1000 / 10)
-	return string.format( "%i:%i", val/1000, val % 1000 / 10 )
-end
+
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
@@ -55,51 +53,11 @@ function scene:createScene( event )
 
 	group:insert( backgroundImage )
 
-	local timeThresh = 3
-
 	local button = display.newRect( 100, 100, 100, 50)
   button:setFillColor( math.random(255), math.random(255), math.random(255) )
-  button.markTime = system.getTimer()
-	group:insert( button )
-
-	display.setStatusBar(display.HiddenStatusBar) 
-	_W = display.contentWidth 
-	_H = display.contentHeight 
-	number = 100
-
-	local txt_counter = display.newText( number, 0, 0, native.systemFont, 50 )
-	txt_counter.x = _W/2
-	txt_counter.y = _H/2
-	txt_counter:setTextColor( 255, 255, 255 )
-
-	-- enterFrame listener function
-	local function trackTime( event )
-
-    elapsedTime = system.getTimer() - button.markTime 
-		if elapsedTime < 10000 then
-		  txt_counter.text = formatTime(10000 - elapsedTime)
-		else
-			txt_counter.text = formatTime(0)
-
-		  -- stop tracking time
-		  Runtime:removeEventListener( "enterFrame", trackTime )
-		 end
-	end
-
-	-- touch event for the button object
-	function touchBtn( event )
-      print ("ev time1"..system.getTimer())
-    if event.phase == "began" then 
-      print("event began")
-      button.markTime = system.getTimer()
-      print ("ev tim2e"..button.markTime)
-		  Runtime:addEventListener( "enterFrame", trackTime )
-    elseif event.phase == "ended" then
-      print("event ended")
-    end
-		return true
-	end
-	button:addEventListener( "touch", touchBtn )
+  --button.markTime = system.getTimer()
+  group:insert( button )
+  local timer = MyTimer ( button, group )
   
 	-----------------------------------------------------------------------------
 		
@@ -176,3 +134,4 @@ scene:addEventListener( "destroyScene", scene )
 ---------------------------------------------------------------------------------
 
 return scene
+
