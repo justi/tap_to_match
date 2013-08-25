@@ -1,4 +1,4 @@
-tap_to_match
+count by tap
 ============
 http://www.ludumdare.com/compo/
 

@@ -9,6 +9,7 @@ local scene = storyboard.newScene()
 
 -- requires
 require( "class" )
+require( "globals" )
 require( "mytimer" )
 
 
