@@ -13,6 +13,7 @@ require( "class" )
 require( "globals" )
 require( "mysprite" )
 require( "tile" )
+require( "tilesmanager" )
 require( "mytimer" )
 
 
@@ -35,8 +36,7 @@ function scene:tick( event )
   if self.ready_to_tiles == true then
 		if self.timer:getCallback('TimerStarted') == true then
 		  self.ready_to_tiles = false
-      tile = Tile( self.view )
-      print ("Create tile")
+      self.tilesManager:createTiles(TILES_COUNT)
 		end
 	end
 
@@ -66,6 +66,8 @@ function scene:createScene( event )
   --button.markTime = system.getTimer()
   group:insert( button )
   self.timer = MyTimer ( button, group )
+  self.tilesManager = TilesManager( group )
+
 
   
 	-----------------------------------------------------------------------------

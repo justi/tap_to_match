@@ -8,10 +8,14 @@ http://www.ludumdare.com/compo/
 Done:
 ----
 
+  - Algo
+  - Timer
+  
+
 Todo:
 ----
 
-  - Algo (with scoring)
+  - Scoring
   - Lead / ending screens
   - Graphics & animation
   - Sound
