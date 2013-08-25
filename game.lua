@@ -6,15 +6,17 @@
 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
+scene.timer = null
 
 -- requires
 require( "class" )
 require( "globals" )
+require( "mysprite" )
+require( "tile" )
 require( "mytimer" )
 
 
 backgroundSpriteData = require( "backgroundsprites" )
-
 ----------------------------------------------------------------------------------
 -- 
 --	NOTE:
@@ -28,11 +30,15 @@ backgroundSpriteData = require( "backgroundsprites" )
 -- BEGINNING OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
 
-function tick( event )
+function scene:tick( event )
 
-	-- test
-    tileObj = Class( )   
-
+  if self.ready_to_tiles == true then
+		if self.timer:getCallback('TimerStarted') == true then
+		  self.ready_to_tiles = false
+      tile = Tile( self.view )
+      print ("Create tile")
+		end
+	end
 
 	-- add tiles
 	-- update tiles
@@ -47,6 +53,7 @@ end
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
+	self.ready_to_tiles = true
 
 	bakckgroundImageSheet = graphics.newImageSheet( "images/background.png", backgroundSpriteData:getSheet( ) )
 
@@ -58,7 +65,8 @@ function scene:createScene( event )
   button:setFillColor( math.random(255), math.random(255), math.random(255) )
   --button.markTime = system.getTimer()
   group:insert( button )
-  local timer = MyTimer ( button, group )
+  self.timer = MyTimer ( button, group )
+
   
 	-----------------------------------------------------------------------------
 		
@@ -72,10 +80,11 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
 	local group = self.view
-
-	Runtime:addEventListener( "enterFrame", tick )
-
-	
+  
+  Runtime:addEventListener( "enterFrame", function (event)
+		 	return self:tick(event)
+		end
+	)
 
 	-----------------------------------------------------------------------------
 		
