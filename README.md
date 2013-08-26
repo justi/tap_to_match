@@ -10,14 +10,16 @@ Done:
 
   - Algo
   - Timer
-  
+  - Lead / ending screens
+  - Levels
+  - Graphics
+
 
 Todo:
 ----
 
   - Scoring
-  - Lead / ending screens
-  - Graphics & animation
+  - Animation
   - Sound
 
 

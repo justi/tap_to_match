@@ -3,12 +3,9 @@
 MyTimer = Class( )
 
 function MyTimer:new( triggerItem, group )
-  -- Create a new sprite and add it to the group
 
-  display.setStatusBar(display.HiddenStatusBar) 
   _W = display.contentWidth 
   _H = display.contentHeight 
-
 
   self.rectangle = display.newRect( 0, 0, _W, 50)
   self.rectangle:setFillColor( 0, 255, 0)
@@ -21,7 +18,11 @@ function MyTimer:new( triggerItem, group )
 
   self.triggerItem = triggerItem
 
+  self.textItem = textItem
+
   self.callback_name = nil
+
+  self.elapsedTime = nil
 
   group:insert( self.rectangle )
   group:insert( self.txt_counter )
@@ -30,11 +31,10 @@ function MyTimer:new( triggerItem, group )
   end
   -- touch event for the button object
   triggerItem:addEventListener( "touch", function (ev)
-      if ev.phase == "began" then 
-        return self:startByTouch( )
-      end
+    if ev.phase == "began" then 
+      return self:startByTouch( )
     end
-  )
+  end)
 end
 
 function MyTimer:formatTime( val )
@@ -47,14 +47,11 @@ function MyTimer:startByTouch( )
   
   -- callback
   self.callback_name = "TimerStarted"
-
-  -- remove btn
-  self.triggerItem:removeSelf( )
-  self.triggerItem = nil
   return true
 end
 
 function MyTimer:getCallback(name)
+  local res = false
   if self.callback_name ~= nil then
     if self.callback_name == name then
       res = true
@@ -64,22 +61,28 @@ function MyTimer:getCallback(name)
 end
 
 function MyTimer:trackTime( )
-  elapsedTime = system.getTimer() - self.markTime 
-  if elapsedTime < TIME * 1000 then
-    self:updateBarColor(elapsedTime)
-    self.txt_counter.text = self:formatTime( TIME * 1000 - elapsedTime )
+  self.elapsedTime = system.getTimer() - self.markTime 
+  if self.elapsedTime < TIME * 1000 then
+    self:updateBarColor(self.elapsedTime)
+    self.txt_counter.text = self:formatTime( TIME * 1000 - self.elapsedTime )
   else
     self.txt_counter.text = self:formatTime( 0 )
-    transition.to( self.rectangle, { time=duration, alpha=1, transition=easing.outQuad} )
-    
-    --self:blinkBarColor( )
-    -- stop tracking time
-    Runtime:removeEventListener( "enterFrame", self.trackTimeHandler )
+    transition.to( self.rectangle, { time=duration, alpha=1} )
+    self:Stop(0)
    end
    return true
 end
 
 function MyTimer:updateBarColor( val )
-  colorVal = 255/( TIME * 1000) * val 
+  local colorVal = 255/( TIME * 1000) * val 
   self.rectangle:setFillColor( colorVal, 255 - colorVal, 0)
+end
+
+function MyTimer:Stop( val )
+  if val == 1 then
+    self.callback_name = "TimerStopped"
+  else
+    self.callback_name = "TimeOver"
+  end
+  Runtime:removeEventListener( "enterFrame", self.trackTimeHandler )
 end

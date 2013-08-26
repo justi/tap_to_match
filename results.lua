@@ -6,15 +6,10 @@
 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
-scene.timer = null
 
 -- requires
 require( "class" )
-require( "mysprite" )
-require( "tile" )
-require( "tilesmanager" )
-require( "mytimer" )
-
+require( "globals" )
 
 backgroundSpriteData = require( "backgroundsprites" )
 ----------------------------------------------------------------------------------
@@ -30,46 +25,14 @@ backgroundSpriteData = require( "backgroundsprites" )
 -- BEGINNING OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
 
-function scene:tick( event )
-  if self.ready_to_tiles == true then
-		if self.timer:getCallback('TimerStarted') == true then
-		  self.ready_to_tiles = false
-		  self.tilesManager:removeGraphics( self.myGroup )
-      self.tilesManager:createTiles( )
-		end
-	end
-	if self.timer:getCallback('TimerStopped') == true or self.timer:getCallback('TimeOver') == true then
-    local gameIsOver = false
-
-    if self.timer:getCallback('TimeOver') == true then
-      gameIsOver = true
-    end
-
-	  local options =
-		{
-			effect = "fade",
-			time = 400,
-			params =
-			{
-				gameTime = self.tilesManager:getGameTime(),
-				level = self.tilesManager:getGameLevel(),
-				gameIsOver = gameIsOver
-			}
-		}
-
-	  self.tilesManager:removeTilesListeners( )
-	  Runtime:removeEventListener( "enterFrame", self.tickHandler )
-		storyboard.removeAll()
-	  storyboard.gotoScene("results", options)
-	end
-end
-
-function scene:prepareGraphicsItems( level )
+function scene:prepareGraphicsItems( params )
 	local group = self.view
+
+	local gameTime = params.gameTime
 
 	bakckgroundImageSheet = graphics.newImageSheet( "images/background.png", backgroundSpriteData:getSheet( ) )
 
-	backgroundImage = display.newImage( bakckgroundImageSheet, backgroundSpriteData:getFrameIndex("game_page") )
+	backgroundImage = display.newImage( bakckgroundImageSheet, backgroundSpriteData:getFrameIndex("result_page") )
 
 	group:insert( backgroundImage )
 
@@ -86,43 +49,67 @@ function scene:prepareGraphicsItems( level )
 
 	self.button = display.newRoundedRect( posX, posY, btnWidth, btnHeight, 10)
   self.button:setFillColor( 255, 230, 240 )
-
-  self.textInfo = display.newText( "Select tiles ascending\nbelow 10 seconds!", posX + btnPading, posY + btnPading*2, btnWidth, btnHeight, native.systemFont, 16 )
+  self.button.alpha = 0.5
+  local text1 = ""
+  local text2 = ""
+  if params.gameIsOver == false then 
+    text1 = string.format( "You did it in %02d:%02d !", gameTime/1000, gameTime % 1000 / 10 )
+    text2 = "Go to next level"
+  else
+  	text1 = string.format( "Game Over")
+  	text2 = "Replay level?"
+  end
+  self.textInfo = display.newText(text1, posX + btnPading, posY + btnPading*2, btnWidth, btnHeight, native.systemFont, 25 )
 	self.textInfo:setTextColor( 0, 0, 0, 255 )
-  
-  local text = string.format( "Level %s ", level )
-	self.textLevelInfo = display.newText(text, posX + btnPading, posY + btnPading*4, btnWidth, btnHeight, native.systemFont, 30)
-	self.textLevelInfo:setTextColor( 15, 25, 50, 255 )
 
-	self.textInst = display.newText( "Ready?", posX + btnPading*2, posY + btnHeight - btnPading*2, native.systemFont, 40 )
+	self.textInst = display.newText(text2, posX, posY + btnHeight - btnPading*2, native.systemFont, 35 )
 	self.textInst:setTextColor( 0, 0, 0, 255 )
 
 	myGroup:insert( self.button )
 	myGroup:insert( self.textInst )
-	myGroup:insert( self.textLevelInfo )
 	myGroup:insert( self.textInfo )
   group:insert( myGroup )
 
   self.myGroup = myGroup
 end
 
+function scene:TouchBtn( )
+	local options =
+		{
+			effect = "fade",
+			time = 400,
+			params =
+			{
+				level = self.level,
+			}
+		}
+	storyboard.gotoScene("game", options)
+end
+
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
 	self.ready_to_tiles = true
+  
+  local params = event.params 
 
-	local params = event.params
-	local level = params.level
+  self:prepareGraphicsItems( params )
 
-	self:prepareGraphicsItems( level )
+	if params.gameIsOver == false then
+		params.level = params.level + 1
+		self.level = params.level
+	else
+		self.level = params.level
+	end
 
-  self.timer = MyTimer ( self.button, group )
-  self.tilesManager = TilesManager( level, group )
-  self.tilesManager.timer = self.timer
-
-  self.tickHandler = function ( event )
-      self:tick()
+  self.btnHandler = function ( event )
+    if event.phase == "began" then 
+      return self:TouchBtn( )
+    end
   end
+
+  self.button:addEventListener( "touch", self.btnHandler)
+	
 
 	-----------------------------------------------------------------------------
 		
@@ -137,7 +124,7 @@ end
 function scene:enterScene( event )
 	local group = self.view
   
-  Runtime:addEventListener( "enterFrame", self.tickHandler )
+  
 	
 	-----------------------------------------------------------------------------
 		
@@ -152,7 +139,11 @@ end
 function scene:exitScene( event )
 	local group = self.view
 
-	Runtime:removeEventListener( "enterFrame", self.tickHandler )
+	self.button:removeEventListener( "touch", self.btnHandler)
+	self.myGroup:removeSelf( )
+	self.myGroup = nil
+
+	storyboard.removeAll()
 	
 	-----------------------------------------------------------------------------
 	
@@ -174,50 +165,6 @@ function scene:destroyScene( event )
 	-----------------------------------------------------------------------------
 	
 end
-
-local function onKeyEvent( event )
-
-   local phase = event.phase
-   local keyName = event.keyName
-
-   if ( "back" == keyName and phase == "up" ) then
-      if ( storyboard.currentScene == "splash" ) then
-         native.requestExit()
-      else
-         if ( storyboard.isOverlay ) then
-            storyboard.hideOverlay()
-         else
-            local lastScene = storyboard.returnTo
-            print( "previous scene", lastScene )
-            if ( lastScene ) then
-               storyboard.gotoScene( lastScene, { effect="crossFade", time=500 } )
-            else
-               native.requestExit()
-            end
-         end
-      end
-   end
-
-   if ( keyName == "volumeUp" and phase == "down" ) then
-      local masterVolume = audio.getVolume()
-      print( "volume:", masterVolume )
-      if ( masterVolume < 1.0 ) then
-         masterVolume = masterVolume + 0.1
-         audio.setVolume( masterVolume )
-      end
-   elseif ( keyName == "volumeDown" and phase == "down" ) then
-      local masterVolume = audio.getVolume()
-      print( "volume:", masterVolume )
-      if ( masterVolume > 0.0 ) then
-         masterVolume = masterVolume - 0.1
-         audio.setVolume( masterVolume )
-      end
-   end
-   return true  --SEE NOTE BELOW
-end
-
---add the key callback
-Runtime:addEventListener( "key", onKeyEvent )
 
 
 ---------------------------------------------------------------------------------

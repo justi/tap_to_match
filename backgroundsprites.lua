@@ -1,7 +1,7 @@
 --
 -- created with TexturePacker (http://www.codeandweb.com/texturepacker)
 --
--- $TexturePacker:SmartUpdate:1421df34bea7a6aab34c1b6a7bc2923a:1/1$
+-- $TexturePacker:SmartUpdate:7bdd94cd73e60983b93cec71052df1bb:1/1$
 --
 -- local sheetInfo = require("mysheet")
 -- local myImageSheet = graphics.newImageSheet( "mysheet.png", sheetInfo:getSheet() )
@@ -23,7 +23,7 @@ SheetInfo.sheet =
 
         },
         {
-            -- lead_page
+            -- result_page
             x=2,
             y=2,
             width=320,
@@ -40,7 +40,7 @@ SheetInfo.frameIndex =
 {
 
     ["game_page"] = 1,
-    ["lead_page"] = 2,
+    ["result_page"] = 2,
 }
 
 function SheetInfo:getSheet()
