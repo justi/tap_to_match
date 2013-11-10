@@ -47,6 +47,8 @@ end
 
 function Tile:TouchedAnim( val )
 	if val == 1 then
+    local tapSound = audio.loadSound( "sounds/tap.mp3" )
+    local narrationChannel = audio.play( tapSound, { duration=1000 } )
     -- self.spriteInst.graphicsInst.strokeWidth = 3
     -- self.spriteInst.graphicsInst:setStrokeColor(self.spriteInst.rVal - minColorVal, self.spriteInst.gVal - minColorVal, self.spriteInst.bVal - minColorVal, 100)
     -- self.spriteInst.alpha = 0.0
