@@ -8,6 +8,7 @@ function Tile:new( group, number )
 	self.number = number
   local myGroup = display.newGroup()
   self.spriteInst = myGroup
+  self.tapSound = audio.loadSound( "sounds/tap.mp3" )
 
 	local graphicsInst = display.newRoundedRect( 0, 0, 50, 50, 10)
 	self.spriteInst.rVal =  math.random(255 - minColorVal) + minColorVal 
@@ -47,8 +48,7 @@ end
 
 function Tile:TouchedAnim( val )
 	if val == 1 then
-    local tapSound = audio.loadSound( "sounds/tap.mp3" )
-    local narrationChannel = audio.play( tapSound, { duration=1000 } )
+    local narrationChannel = audio.play( self.tapSound, { duration=1000 } )
     -- self.spriteInst.graphicsInst.strokeWidth = 3
     -- self.spriteInst.graphicsInst:setStrokeColor(self.spriteInst.rVal - minColorVal, self.spriteInst.gVal - minColorVal, self.spriteInst.bVal - minColorVal, 100)
     -- self.spriteInst.alpha = 0.0
