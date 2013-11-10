@@ -47,8 +47,9 @@ end
 
 function Tile:TouchedAnim( val )
 	if val == 1 then
-    self.spriteInst.graphicsInst.strokeWidth = 3
-    self.spriteInst.graphicsInst:setStrokeColor(self.spriteInst.rVal - minColorVal, self.spriteInst.gVal - minColorVal, self.spriteInst.bVal - minColorVal, 100)
-    self.spriteInst.alpha = 0.6
+    -- self.spriteInst.graphicsInst.strokeWidth = 3
+    -- self.spriteInst.graphicsInst:setStrokeColor(self.spriteInst.rVal - minColorVal, self.spriteInst.gVal - minColorVal, self.spriteInst.bVal - minColorVal, 100)
+    -- self.spriteInst.alpha = 0.0
+    transition.to( self.spriteInst, { time=200, alpha=0} )
 	end
 end
